@@ -77,11 +77,30 @@ export let TableSettings = (_class = class TableSettings {
   }
 
   loadItems() {
-    let query = this.buildQuery();
-    return this.getItems(query).then(result => {
-      this.items = result.items;
-      this.totalItems = result.totalItems;
-    });
+    if (!this.loadItemsRequestPromise) {
+      this.loadItemsRequestPromise = new Promise((resolve, reject) => {
+        requestAnimationFrame(() => {
+          try {
+            let query = this.buildQuery();
+
+            let ret = this
+              .getItems(query)
+              .then(result => {
+                this.items = result.items;
+                this.totalItems = result.totalItems;
+              });
+
+            resolve(ret);
+          } catch (err) {
+            reject(err);
+          } finally {
+            this.loadItemsRequestPromise = null;
+          }
+        });
+      });
+    }
+
+    return this.loadItemsRequestPromise;
   }
 
   buildQuery() {

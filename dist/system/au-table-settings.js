@@ -115,11 +115,28 @@ System.register(['aurelia-framework'], function (_export, _context) {
         TableSettings.prototype.loadItems = function loadItems() {
           var _this = this;
 
-          var query = this.buildQuery();
-          return this.getItems(query).then(function (result) {
-            _this.items = result.items;
-            _this.totalItems = result.totalItems;
-          });
+          if (!this.loadItemsRequestPromise) {
+            this.loadItemsRequestPromise = new Promise(function (resolve, reject) {
+              requestAnimationFrame(function () {
+                try {
+                  var query = _this.buildQuery();
+
+                  var ret = _this.getItems(query).then(function (result) {
+                    _this.items = result.items;
+                    _this.totalItems = result.totalItems;
+                  });
+
+                  resolve(ret);
+                } catch (err) {
+                  reject(err);
+                } finally {
+                  _this.loadItemsRequestPromise = null;
+                }
+              });
+            });
+          }
+
+          return this.loadItemsRequestPromise;
         };
 
         TableSettings.prototype.buildQuery = function buildQuery() {
