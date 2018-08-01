@@ -76,9 +76,6 @@ export class AutSortCustomAttribute {
   }
 
   doSort() {
-    if (this.auTable.dataSource === 'server') {
-      return;
-    }
     this.ignoreEvent = true;
     this
       .auTable

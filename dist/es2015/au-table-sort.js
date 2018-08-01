@@ -108,9 +108,6 @@ export let AutSortCustomAttribute = (_dec = inject(AureliaTableCustomAttribute, 
   }
 
   doSort() {
-    if (this.auTable.dataSource === 'server') {
-      return;
-    }
     this.ignoreEvent = true;
     this.auTable.sortChanged(this.key, this.custom, this.order);
   }
